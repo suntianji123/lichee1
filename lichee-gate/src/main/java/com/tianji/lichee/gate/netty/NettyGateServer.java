@@ -5,6 +5,7 @@ import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
+import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
@@ -29,6 +30,8 @@ public class NettyGateServer implements GateServer {
 
     private DefaultEventExecutorGroup defaultEventExecutorGroup;
 
+    private PacketEncoder packetEncoder;
+
     public NettyGateServer(final NettyServerConfig nettyServerConfig){
         this.serverBootstrap = new ServerBootstrap();
         this.nettyServerConfig = nettyServerConfig;
@@ -49,6 +52,10 @@ public class NettyGateServer implements GateServer {
         });
     }
 
+    private void prepareSharableHandlers(){
+        packetEncoder =  new PacketEncoder();
+    }
+
     public void start() {
         this.defaultEventExecutorGroup = new DefaultEventExecutorGroup(nettyServerConfig.getServerWorkerThreads(), new ThreadFactory() {
             private AtomicInteger threadIndex = new AtomicInteger(0);
@@ -58,6 +65,8 @@ public class NettyGateServer implements GateServer {
                 return new Thread(r,String.format("Gate_NettyServerCodecThread_%d_%d",threadTotal,threadIndex.getAndIncrement()));
             }
         });
+
+        prepareSharableHandlers();
 
         ServerBootstrap childHandler = this.serverBootstrap.group(this.eventLoopGroupBoss,this.eventLoopGroupSelector)
                 .channel(NioServerSocketChannel.class)
@@ -70,8 +79,10 @@ public class NettyGateServer implements GateServer {
                 .localAddress(new InetSocketAddress(this.nettyServerConfig.getListenPort()))
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
-                    protected void initChannel(SocketChannel socketChannel) throws Exception {
-                        //todo:添加handler
+                    protected void initChannel(SocketChannel channel) throws Exception {
+                        ChannelPipeline pipeline = channel.pipeline();
+                        pipeline.addLast(defaultEventExecutorGroup,
+                                packetEncoder,new PacketDecoder());
                     }
                 });
         if(nettyServerConfig.isServerPooledByteBufAllocatorEnable()){
