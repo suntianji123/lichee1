@@ -6,12 +6,16 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="lichee-rpc" />
+        <module name="lichee-common" />
         <module name="lichee-gate" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="lichee-all" target="1.5" />
+      <module name="lichee-common" target="1.5" />
       <module name="lichee-gate" target="1.5" />
+      <module name="lichee-rpc" target="1.5" />
     </bytecodeTargetLevel>
   </component>
 </project>

@@ -3,7 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/lichee-all.iml" filepath="$PROJECT_DIR$/lichee-all.iml" />
+      <module fileurl="file://$PROJECT_DIR$/lichee-common/lichee-common.iml" filepath="$PROJECT_DIR$/lichee-common/lichee-common.iml" />
       <module fileurl="file://$PROJECT_DIR$/lichee-gate/lichee-gate.iml" filepath="$PROJECT_DIR$/lichee-gate/lichee-gate.iml" />
+      <module fileurl="file://$PROJECT_DIR$/lichee-rpc/lichee-rpc.iml" filepath="$PROJECT_DIR$/lichee-rpc/lichee-rpc.iml" />
     </modules>
   </component>
 </project>
